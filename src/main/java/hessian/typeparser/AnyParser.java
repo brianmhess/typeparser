@@ -2,6 +2,7 @@ package hessian.typeparser;
 
 import com.datastax.driver.core.UserType;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -58,7 +59,7 @@ public class AnyParser {
         Parser parser;
         if (t instanceof Collection) {
             if (t instanceof List) {
-                Parser listParser = getParser(t.getClass().getTypeParameters()[0]);
+                Parser listParser = getParser(((ParameterizedType)t).getActualTypeArguments()[0]);
                 if (null == listParser) {
                     throw new ParseException("List data type not recognized ("
                             + t.getClass().getTypeParameters()[0]
@@ -67,7 +68,7 @@ public class AnyParser {
                 parser = new ListParser(listParser, ',', '[', ']');
             }
             else if (t instanceof Set) {
-                Parser setParser = getParser(t.getClass().getTypeParameters()[0]);
+                Parser setParser = getParser(((ParameterizedType)t).getActualTypeArguments()[0]);
                 if (null == setParser) {
                     throw new ParseException("Set data type not recognized ("
                             + t.getClass().getTypeParameters()[0]
@@ -76,13 +77,13 @@ public class AnyParser {
                 parser = new SetParser(setParser, ',', '{', '}');
             }
             else if (t instanceof Map) {
-                Parser keyParser = getParser(t.getClass().getTypeParameters()[0]);
+                Parser keyParser = getParser(((ParameterizedType)t).getActualTypeArguments()[0]);
                 if (null == keyParser) {
                     throw new ParseException("Map key data type not recognized ("
                             + t.getClass().getTypeParameters()[0]
                             + ")", 0);
                 }
-                Parser valueParser = getParser(t.getClass().getTypeParameters()[1]);
+                Parser valueParser = getParser(((ParameterizedType)t).getActualTypeArguments()[1]);
                 if (null == valueParser) {
                     throw new ParseException("Map value data type not recognized ("
                             + t.getClass().getTypeParameters()[1]
