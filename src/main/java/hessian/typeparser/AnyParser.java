@@ -15,6 +15,8 @@ public class AnyParser {
     private static Map<Type, Parser> pmap = initPmap();
 
     public static <T> T parse(String instr, Type t) throws ParseException {
+        if (null == instr)
+            return null;
         return (T)getParser(t).parse(instr);
     }
 
